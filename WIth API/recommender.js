@@ -121,7 +121,8 @@ async function expandQueryWithGemini(query) {
 function findSimilarArticles(query){
     const queryLower = query.toLowerCase();
     return articles.filter(article => 
-        article.title.toLowerCase().includes(queryLower) 
+        article.title.toLowerCase().includes(queryLower) || 
+        article.content.toLowerCase().includes(queryLower) 
     );
     
 }
@@ -155,7 +156,7 @@ async function search() {
     try {
         const searcharticles = findSimilarArticles(query);
         displaySearch(searcharticles);
-        
+
         const expandedQuery = await expandQueryWithGemini(query);
         console.log(expandedQuery);
         // Add expanded query to search history
