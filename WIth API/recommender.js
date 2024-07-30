@@ -101,7 +101,7 @@ const articleVectors = processedArticles.map(article =>
 
 var storedarray = [];
 
-let historystring = sessionStorage.getItem('searchHistory');
+let historystring = localStorage.getItem('searchHistory');
 
 console.log(historystring);
 
@@ -176,7 +176,7 @@ async function search() {
         searchHistory.push(expandedQuery);
         storedarray = JSON.stringify(searchHistory);
         console.log(searchHistory)
-        sessionStorage.setItem('searchHistory', storedarray);
+        localStorage.setItem('searchHistory', storedarray);
         // Limit history to last 5 searches
         if (searchHistory.length > 5) {
             searchHistory.shift();
