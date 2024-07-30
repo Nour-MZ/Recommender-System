@@ -99,14 +99,27 @@ const articleVectors = processedArticles.map(article =>
     calculateTfIdfVector(article.processedContent, processedArticles.map(a => a.processedContent), uniqueTerms)
 );
 
-// Search history
-let searchHistory = [];
+var storedarray = [];
+
+let historystring = sessionStorage.getItem('searchHistory');
+
+console.log(historystring);
+
+var searchHistory = [];
+
+if(historystring == null){
+    console.log("goods");
+    
+}
+else{searchHistory = JSON.parse(historystring);}
+
+
 
 // Function to expand query using Gemini API
 async function expandQueryWithGemini(query) {
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const prompt = `Expand the following search query with related terms, keeping the original terms. Separate each term with a comma and limit to 10 terms: "${query}"`;
+        const prompt = `Expand the following search query with related terms, keeping the original terms, dont use terms already used. Separate each term with a comma and limit to 10 terms: "${query}"`;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -158,10 +171,12 @@ async function search() {
         displaySearch(searcharticles);
 
         const expandedQuery = await expandQueryWithGemini(query);
-        console.log(expandedQuery);
+       
         // Add expanded query to search history
         searchHistory.push(expandedQuery);
+        storedarray = JSON.stringify(searchHistory);
         console.log(searchHistory)
+        sessionStorage.setItem('searchHistory', storedarray);
         // Limit history to last 5 searches
         if (searchHistory.length > 5) {
             searchHistory.shift();
@@ -188,7 +203,7 @@ function updateRecommendations() {
 
     // Calculate relevance scores for each article
     const scoredArticles = processedArticles.map((article, index) => {
-        console.log(articleVectors[index])
+       
         const relevanceScore = cosineSimilarity(queryVector, articleVectors[index]);
         return { ...article, score: relevanceScore };
     });
@@ -196,8 +211,8 @@ function updateRecommendations() {
     // Sort articles by relevance score
     scoredArticles.sort((a, b) => b.score - a.score);
 
-    // Display top 3 recommendations
-    scoredArticles.slice(0, 3).forEach(article => {
+    // Display top 5 recommendations
+    scoredArticles.slice(0, 5).forEach(article => {
         const li = document.createElement('li');
         li.textContent = `${article.title} (Relevance: ${article.score.toFixed(4)})`;
         recommendationsList.appendChild(li);
