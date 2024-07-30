@@ -88,7 +88,7 @@ function cosineSimilarity(vec1, vec2) {
 // Preprocess all articles
 const processedArticles = articles.map(article => ({
     ...article,
-    processedContent: preprocessText(article.content)
+    processedContent: preprocessText(article.content )
 }));
 
 // Get all unique terms
@@ -118,8 +118,34 @@ async function expandQueryWithGemini(query) {
         return query; // Return original query if expansion fails
     }
 }
+function findSimilarArticles(query){
+    const queryLower = query.toLowerCase();
+    return articles.filter(article => 
+        article.title.toLowerCase().includes(queryLower) 
+    );
+    
+}
 
-// Function to search and update recommendations
+function displaySearch(similarArticles){
+    searchlist.innerHTML = "";
+    similarArticles.forEach(article => {
+        const div = document.createElement('div');
+        const lititle = document.createElement('li');
+        const li = document.createElement('li');
+        lititle.textContent = `${article.title}`;
+        li .textContent = `${article.content}`;
+        div.appendChild(lititle);
+        div.appendChild(li);
+        searchlist.appendChild(div);
+    });
+
+    if (similarArticles.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No articles found.';
+        searchlist.appendChild(li);
+    }
+}
+
 async function search() {
     const searchInput = document.getElementById('searchInput');
     const query = searchInput.value.trim();
@@ -127,7 +153,9 @@ async function search() {
     if (query === '') return;
 
     try {
-        // Expand the query using Gemini API
+        const searcharticles = findSimilarArticles(query);
+        displaySearch(searcharticles);
+        
         const expandedQuery = await expandQueryWithGemini(query);
         console.log(expandedQuery);
         // Add expanded query to search history
