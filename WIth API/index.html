@@ -1,39 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article Recommender</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        input { width: 100%; padding: 10px; margin-bottom: 10px; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin-bottom: 10px; }
-    </style>
-    <script type="importmap">
-        {
-          "imports": {
-            "@google/generative-ai": "https://esm.run/@google/generative-ai"
-          }
-        }
-        
-    </script>
-    <script>
-       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-       console.log(currentUser)
-    </script>
+  <title>Login Validation Example</title>
 </head>
 <body>
-  <h1>Article Recommender With API</h1>
-  <input type="text" id="searchInput" placeholder="Enter your search query">
-  <button id="searchButton">Search</button>
-  <h2>Search Results</h2>
-  <ul id="searchlist">
-    Search Results here :
-  </ul>
-  <h2>Recommendations</h2>
-  <ul id="recommendationsList"></ul>
+  <form id="login-form">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username"><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password"><br><br>
+    <button id="login-button">Login</button>
+  </form>
+  <p id="result"></p>
 
-    <script type="module" src="recommender.js"></script>
+  <script>
+    
+    const users = [
+      { username: "developer", job: "web developer", password: "123" },
+      { username: "business", job: "business man", password: "123" },
+      { username: "marketing", job: "marketing", password: "123" },
+      { username: "ceo", job: "CEO", password: "123" },
+      { username: "hr", job: "hr", password: "123" },
+      { username: "designer", job: "graphic designer", password: "123" }
+    ];
+
+    document.getElementById("login-button").addEventListener("click", function(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+   
+      const isValid = users.some((user) => user.username === username && user.password === password);
+
+      if (isValid) {
+        const currentUser = users.find((user) => user.username === username);
+        console.log(currentUser)
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        location.href = "indexer.html";
+      } else {
+        document.getElementById("result").textContent = "Invalid username or password.";
+      }
+    });
+  </script>
 </body>
 </html>
